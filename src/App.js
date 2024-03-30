@@ -10,7 +10,7 @@ function App() {
     <div className="App">
       <h1>To-do List App</h1>
       <Provider store={store}>
-        {/* <TaskInput /> */}
+        <TaskInput />
         <TaskList />
         {/* <X /> */}
       </Provider>

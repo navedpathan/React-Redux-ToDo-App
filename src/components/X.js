@@ -1,35 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { createStore } from 'redux';
-import { Provider, useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { addTask, deleteTask, toggleTask } from '../redux/action';
 
-// Action creators
-const addTask = (text) => ({ type: 'ADD_TASK', payload: text });
-const toggleTask = (index) => ({ type: 'TOGGLE_TASK', payload: index });
-const deleteTask = (index) => ({ type: 'DELETE_TASK', payload: index });
-
-// Reducer
-const initialState = {
-  tasks: JSON.parse(localStorage.getItem('tasks')) || [],
-};
-
-const taskReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'ADD_TASK':
-      return {...state, tasks: [...state.tasks, {text: action.payload, completed: false}] };
-
-    case 'TOGGLE_TASK':
-      return {...state, tasks: state.tasks.map((task, index) => index === action.payload ? { ...task, completed: !task.completed } : task)} 
-    case 'DELETE_TASK':
-      return {...state, tasks: state.tasks.filter((task, index) => index !== action.payload)};
-    default:
-      return state;
-  }
-};
-
-// Redux store
-const store = createStore(taskReducer);
-
-// Component
 function TaskList() {
   const tasks = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
@@ -84,13 +56,4 @@ function TaskList() {
   );
 }
 
-// App component
-function App() {
-  return (
-    <Provider store={store}>
-      <TaskList />
-    </Provider>
-  );
-}
-
-export default App;
+export default TaskList;

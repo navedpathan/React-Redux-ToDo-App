@@ -1,29 +1,30 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addTask } from "../redux/action";
+import React, {useState} from 'react';
+import { useDispatch } from 'react-redux';
+import { addTask } from '../redux/action';
 
 function TaskInput() {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const dispatch = useDispatch();
 
-  const handleChange = (e) => {
-    setInputValue(e.target.value);
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
   };
 
-  const handleAdd = (e) => {
-    e.preventDefault();
-    if (inputValue !== "") {
+  const handleAddTask = () => {
+    if (inputValue.trim() !== '') {
       dispatch(addTask(inputValue));
-      setInputValue("");
+      setInputValue('');
     }
   };
-
+  
   return (
-    <form onSubmit={handleAdd}>
-      <input type="text" value={inputValue} onChange={handleChange} />
+    <div>
+      <form onSubmit={handleAddTask}>
+      <input type="text" value={inputValue} onChange={handleInputChange} />
       <button>Add</button>
-    </form>
-  );
+      </form>
+    </div>
+  )
 }
 
-export default TaskInput;
+export default TaskInput
