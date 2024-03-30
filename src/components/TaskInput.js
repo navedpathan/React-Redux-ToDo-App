@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
-import { useDispatch } from 'react-redux';
-import { addTask } from '../redux/action';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addTask } from "../redux/action";
 
 function TaskInput() {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
 
   const handleInputChange = (event) => {
@@ -11,20 +11,25 @@ function TaskInput() {
   };
 
   const handleAddTask = () => {
-    if (inputValue.trim() !== '') {
+    if (inputValue.trim() !== "") {
       dispatch(addTask(inputValue));
-      setInputValue('');
+      setInputValue("");
     }
   };
-  
+
   return (
     <div>
-      <form onSubmit={handleAddTask}>
-      <input type="text" value={inputValue} onChange={handleInputChange} />
-      <button>Add</button>
+      <form onSubmit={handleAddTask} className="input_container">
+        <input
+          className="todo-input"
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+        />
+        <button className="todo-button">Add</button>
       </form>
     </div>
-  )
+  );
 }
 
-export default TaskInput
+export default TaskInput;

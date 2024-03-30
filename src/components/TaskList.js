@@ -21,21 +21,12 @@ function TaskList() {
   return (
     <div>
       {tasks.map((task, index) => (
-        <h3
-          key={index}
-          style={{ textDecoration: task.completed ? "line-through" : "none" }}
-        >
-          <input
-            type="checkbox"
-            checked={task.completed}
-            disabled={task.completed}
-            onChange={() => handleToggleTask(index)}
-          />
-          <span>{task.text}</span>
-
-          <button onClick={() => handleDeleteTask(index)}>Delete</button>
-        </h3>
-      ))}
+      <div class={`todo-item ${task.completed ? 'completed' : ''}`} key={index}>
+        <input class="todo-checkbox" type="checkbox" checked={task.completed} onChange={() => handleToggleTask(index)} />
+        <span>{task.text}</span>
+        <button class="todo-delete-button" onClick={() => handleDeleteTask(index)}>Delete</button>
+      </div>
+    ))}
     </div>
   );
 }
