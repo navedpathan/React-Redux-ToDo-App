@@ -1,99 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { createStore } from 'redux';
-import { Provider, useSelector, useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 
+function TodoList() {
+  const [todos, setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState('');
 
-const initialState = {
-    tasks: JSON.parse(localStorage.getItem('tasks'))
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
   };
 
-const taskReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "ADD_TASK":
-        return {...state, tasks: [...state.tasks, {text: action.payload, completed: false}] };
+  const handleAddTodo = () => {
+    if (inputValue.trim() !== '') {
+      setTodos([...todos, inputValue]);
+      setInputValue('');
+    }
+  };
 
-      case "DELETE_TASK":
-          return {...state, tasks: state.tasks.filter((task, index) => index !== action.payload)};
-
-      case "TOGGLE_TASK":
-          return {...state, tasks: state.tasks.map((task, index) => index === action.payload ? { ...task, completed: !task.completed } : task)} 
-    default:
-      return state;
-  }
-};
-
-// Redux store
-const store = createStore(taskReducer);
-
-export const addTask = (value) => ({ type: "ADD_TASK", payload: value });
-
-export const deleteTask = (index) => ({ type: "DELETE_TASK", payload: index });
-
-export const toggleTask = (index) => ({ type: "TOGGLE_TASK", payload: index });
-
-// Component
-function TaskList() {
-  const [inputValue, setInputValue] = useState("");
-
-    const tasks = useSelector((state) => state.tasks);
-    const dispatch = useDispatch();
-  
-    useEffect(() => {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }, [tasks]);
-  
-    const handleChange = (e) => {
-        setInputValue(e.target.value);
-      };
-    
-      const handleAdd = (e) => {
-        e.preventDefault();
-        if (inputValue !== "") {
-          dispatch(addTask(inputValue));
-          setInputValue("");
-        }
-      };
-
-    const handleDelete = (index) => {
-      dispatch(deleteTask(index));
-    };
-  
-    const handleToggle = (index) => {
-      dispatch(toggleTask(index));
-    };
+  const handleDeleteTodo = (index) => {
+    const updatedTodos = todos.filter((_, i) => i !== index);
+    setTodos(updatedTodos);
+  };
 
   return (
-    <form onSubmit={handleAdd}>
-      <input type="text" value={inputValue} onChange={handleChange} />
-      <button>Add</button>
-      {tasks.map((task, index) => (
-        <h3
-          key={index}
-          style={{ textDecoration: task.completed ? "line-through" : "none" }}
-        >
-          <input
-            type="checkbox"
-            checked={task.completed}
-            disabled={task.completed}
-            onChange={() => handleToggle(index)}
-          />
-          <span>{task.text}</span>
-
-          <button onClick={() => handleDelete(index)}>Delete</button>
-        </h3>
-      ))}
-    </form>
-    
+    <div>
+      <h1>Todo List</h1>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+        placeholder="Add a new todo"
+      />
+      <button onClick={handleAddTodo}>Add</button>
+      <ul>
+        {todos.map((todo, index) => (
+          <li key={index}>
+            {todo}
+            <button onClick={() => handleDeleteTodo(index)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
-// App component
-function App() {
-  return (
-    <Provider store={store}>
-      <TaskList />
-    </Provider>
-  );
-}
-
-export default App;
+export default TodoList;

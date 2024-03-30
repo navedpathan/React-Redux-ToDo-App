@@ -11,8 +11,8 @@ function App() {
       <h1>To-do List App</h1>
       <Provider store={store}>
         {/* <TaskInput /> */}
-        <TaskList />
-        {/* <X /> */}
+        {/* <TaskList /> */}
+        <X />
       </Provider>
     </div>
   );

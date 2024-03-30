@@ -2,91 +2,88 @@ import React, { useState, useEffect } from 'react';
 import { createStore } from 'redux';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 
-// Action types
-const ADD_TODO = 'ADD_TODO';
-const TOGGLE_TODO = 'TOGGLE_TODO';
-const DELETE_TODO = 'DELETE_TODO';
 
-// Action creators
-const addTodo = (text) => ({ type: ADD_TODO, payload: text });
-const toggleTodo = (index) => ({ type: TOGGLE_TODO, payload: index });
-const deleteTodo = (index) => ({ type: DELETE_TODO, payload: index });
-
-// Reducer
 const initialState = {
-  todos: JSON.parse(localStorage.getItem('todos')) || [],
-};
+    tasks: JSON.parse(localStorage.getItem('tasks'))
+  };
 
-const todoReducer = (state = initialState, action) => {
+const taskReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_TODO:
-      const newTodo = { text: action.payload, completed: false };
-      const updatedTodos = [...state.todos, newTodo];
-      return { todos: updatedTodos };
-    case TOGGLE_TODO:
-      const toggledTodos = state.todos.map((todo, index) =>
-        index === action.payload ? { ...todo, completed: !todo.completed } : todo
-      );
-      return { todos: toggledTodos };
-    case DELETE_TODO:
-      const filteredTodos = state.todos.filter((_, i) => i !== action.payload);
-      return { todos: filteredTodos };
+    case "ADD_TASK":
+        return {...state, tasks: [...state.tasks, {text: action.payload, completed: false}] };
+
+      case "DELETE_TASK":
+          return {...state, tasks: state.tasks.filter((task, index) => index !== action.payload)};
+
+      case "TOGGLE_TASK":
+          return {...state, tasks: state.tasks.map((task, index) => index === action.payload ? { ...task, completed: !task.completed } : task)} 
     default:
       return state;
   }
 };
 
 // Redux store
-const store = createStore(todoReducer);
+const store = createStore(taskReducer);
+
+export const addTask = (value) => ({ type: "ADD_TASK", payload: value });
+
+export const deleteTask = (index) => ({ type: "DELETE_TASK", payload: index });
+
+export const toggleTask = (index) => ({ type: "TOGGLE_TASK", payload: index });
 
 // Component
-function TodoList() {
-  const todos = useSelector((state) => state.todos);
-  const dispatch = useDispatch();
-  const [inputValue, setInputValue] = useState('');
+function TaskList() {
+  const [inputValue, setInputValue] = useState("");
 
-  useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
+    const tasks = useSelector((state) => state.tasks);
+    const dispatch = useDispatch();
+  
+    useEffect(() => {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }, [tasks]);
+  
+    const handleChange = (e) => {
+        setInputValue(e.target.value);
+      };
+    
+      const handleAdd = (e) => {
+        e.preventDefault();
+        if (inputValue !== "") {
+          dispatch(addTask(inputValue));
+          setInputValue("");
+        }
+      };
 
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
-
-  const handleAddTodo = () => {
-    if (inputValue.trim() !== '') {
-      dispatch(addTodo(inputValue));
-      setInputValue('');
-    }
-  };
-
-  const handleToggleTodo = (index) => {
-    dispatch(toggleTodo(index));
-  };
-
-  const handleDeleteTodo = (index) => {
-    dispatch(deleteTodo(index));
-  };
+    const handleDelete = (index) => {
+      dispatch(deleteTask(index));
+    };
+  
+    const handleToggle = (index) => {
+      dispatch(toggleTask(index));
+    };
 
   return (
-    <div>
-      <h1>Todo List</h1>
-      <input
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        placeholder="Add a new todo"
-      />
-      <button onClick={handleAddTodo}>Add</button>
-      <ul>
-        {todos.map((todo, index) => (
-          <li key={index} style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
-            <span onClick={() => handleToggleTodo(index)}>{todo.text}</span>
-            <button onClick={() => handleDeleteTodo(index)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <form onSubmit={handleAdd}>
+      <input type="text" value={inputValue} onChange={handleChange} />
+      <button>Add</button>
+      {tasks.map((task, index) => (
+        <h3
+          key={index}
+          style={{ textDecoration: task.completed ? "line-through" : "none" }}
+        >
+          <input
+            type="checkbox"
+            checked={task.completed}
+            disabled={task.completed}
+            onChange={() => handleToggle(index)}
+          />
+          <span>{task.text}</span>
+
+          <button onClick={() => handleDelete(index)}>Delete</button>
+        </h3>
+      ))}
+    </form>
+    
   );
 }
 
@@ -94,7 +91,7 @@ function TodoList() {
 function App() {
   return (
     <Provider store={store}>
-      <TodoList />
+      <TaskList />
     </Provider>
   );
 }
