@@ -2,15 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { createStore } from 'redux';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 
-// Action types
-const ADD_TODO = 'ADD_TODO';
-const TOGGLE_TODO = 'TOGGLE_TODO';
-const DELETE_TODO = 'DELETE_TODO';
-
 // Action creators
-const addTodo = (text) => ({ type: ADD_TODO, payload: text });
-const toggleTodo = (index) => ({ type: TOGGLE_TODO, payload: index });
-const deleteTodo = (index) => ({ type: DELETE_TODO, payload: index });
+const addTodo = (text) => ({ type: 'ADD_TODO', payload: text });
+const toggleTodo = (index) => ({ type: 'TOGGLE_TODO', payload: index });
+const deleteTodo = (index) => ({ type: 'DELETE_TODO', payload: index });
 
 // Reducer
 const initialState = {
@@ -19,12 +14,12 @@ const initialState = {
 
 const todoReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_TODO:
+    case 'ADD_TODO':
       return {...state, todos: [...state.todos, {text: action.payload, completed: false}] };
 
-    case TOGGLE_TODO:
+    case 'TOGGLE_TODO':
       return {...state, todos: state.todos.map((todo, index) => index === action.payload ? { ...todo, completed: !todo.completed } : todo)} 
-    case DELETE_TODO:
+    case 'DELETE_TODO':
       return {...state, todos: state.todos.filter((todo, index) => index !== action.payload)};
     default:
       return state;
