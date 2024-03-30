@@ -1,25 +1,40 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { deleteTask, toggleTask } from "../redux/action";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addTask, deleteTask, toggleTask } from '../redux/action';
 
 function TaskList() {
   const tasks = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
+  const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
 
-  const handleDelete = (index) => {
-    dispatch(deleteTask(index));
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
   };
 
-  const handleToggle = (index) => {
+  const handleAddTask = () => {
+    if (inputValue.trim() !== '') {
+      dispatch(addTask(inputValue));
+      setInputValue('');
+    }
+  };
+
+  const handleToggleTask = (index) => {
     dispatch(toggleTask(index));
+  };
+
+  const handleDeleteTask = (index) => {
+    dispatch(deleteTask(index));
   };
 
   return (
     <div>
+       <form onSubmit={handleAddTask}>
+      <input type="text" value={inputValue} onChange={handleInputChange} />
+      <button>Add</button>
       {tasks.map((task, index) => (
         <h3
           key={index}
@@ -29,13 +44,14 @@ function TaskList() {
             type="checkbox"
             checked={task.completed}
             disabled={task.completed}
-            onChange={() => handleToggle(index)}
+            onChange={() => handleToggleTask(index)}
           />
           <span>{task.text}</span>
 
-          <button onClick={() => handleDelete(index)}>Delete</button>
+          <button onClick={() => handleDeleteTask(index)}>Delete</button>
         </h3>
       ))}
+      </form>
     </div>
   );
 }
