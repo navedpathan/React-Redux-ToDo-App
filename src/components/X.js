@@ -60,15 +60,9 @@ function TaskList() {
 
   return (
     <div>
-      <h1>Task List</h1>
-      <input
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        placeholder="Add a new task"
-      />
-      <button onClick={handleAddTask}>Add</button>
-      <ul>
+       <form onSubmit={handleAddTask}>
+      <input type="text" value={inputValue} onChange={handleInputChange} />
+      <button>Add</button>
       {tasks.map((task, index) => (
         <h3
           key={index}
@@ -85,7 +79,7 @@ function TaskList() {
           <button onClick={() => handleDeleteTask(index)}>Delete</button>
         </h3>
       ))}
-      </ul>
+      </form>
     </div>
   );
 }
