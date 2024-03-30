@@ -20,20 +20,12 @@ const initialState = {
 const todoReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_TODO:
-      const newTodo = { text: action.payload, completed: false };
-      const updatedTodos = [...state.todos, newTodo];
-      // localStorage.setItem('todos', JSON.stringify(updatedTodos));
-      return { todos: updatedTodos };
+      return {...state, todos: [...state.todos, {text: action.payload, completed: false}] };
+
     case TOGGLE_TODO:
-      const toggledTodos = state.todos.map((todo, index) =>
-        index === action.payload ? { ...todo, completed: !todo.completed } : todo
-      );
-      // localStorage.setItem('todos', JSON.stringify(toggledTodos));
-      return { todos: toggledTodos };
+      return {...state, todos: state.todos.map((todo, index) => index === action.payload ? { ...todo, completed: !todo.completed } : todo)} 
     case DELETE_TODO:
-      const filteredTodos = state.todos.filter((_, i) => i !== action.payload);
-      // localStorage.setItem('todos', JSON.stringify(filteredTodos));
-      return { todos: filteredTodos };
+      return {...state, todos: state.todos.filter((todo, index) => index !== action.payload)};
     default:
       return state;
   }
