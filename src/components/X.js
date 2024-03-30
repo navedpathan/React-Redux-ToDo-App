@@ -22,17 +22,17 @@ const todoReducer = (state = initialState, action) => {
     case ADD_TODO:
       const newTodo = { text: action.payload, completed: false };
       const updatedTodos = [...state.todos, newTodo];
-      localStorage.setItem('todos', JSON.stringify(updatedTodos));
+      // localStorage.setItem('todos', JSON.stringify(updatedTodos));
       return { todos: updatedTodos };
     case TOGGLE_TODO:
       const toggledTodos = state.todos.map((todo, index) =>
         index === action.payload ? { ...todo, completed: !todo.completed } : todo
       );
-      localStorage.setItem('todos', JSON.stringify(toggledTodos));
+      // localStorage.setItem('todos', JSON.stringify(toggledTodos));
       return { todos: toggledTodos };
     case DELETE_TODO:
       const filteredTodos = state.todos.filter((_, i) => i !== action.payload);
-      localStorage.setItem('todos', JSON.stringify(filteredTodos));
+      // localStorage.setItem('todos', JSON.stringify(filteredTodos));
       return { todos: filteredTodos };
     default:
       return state;
