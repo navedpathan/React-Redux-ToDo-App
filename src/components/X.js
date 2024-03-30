@@ -3,78 +3,88 @@ import { createStore } from 'redux';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 
 // Action creators
-const addTodo = (text) => ({ type: 'ADD_TODO', payload: text });
-const toggleTodo = (index) => ({ type: 'TOGGLE_TODO', payload: index });
-const deleteTodo = (index) => ({ type: 'DELETE_TODO', payload: index });
+const addTask = (text) => ({ type: 'ADD_TASK', payload: text });
+const toggleTask = (index) => ({ type: 'TOGGLE_TASK', payload: index });
+const deleteTask = (index) => ({ type: 'DELETE_TASK', payload: index });
 
 // Reducer
 const initialState = {
-  todos: JSON.parse(localStorage.getItem('todos')) || [],
+  tasks: JSON.parse(localStorage.getItem('tasks')) || [],
 };
 
-const todoReducer = (state = initialState, action) => {
+const taskReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'ADD_TODO':
-      return {...state, todos: [...state.todos, {text: action.payload, completed: false}] };
+    case 'ADD_TASK':
+      return {...state, tasks: [...state.tasks, {text: action.payload, completed: false}] };
 
-    case 'TOGGLE_TODO':
-      return {...state, todos: state.todos.map((todo, index) => index === action.payload ? { ...todo, completed: !todo.completed } : todo)} 
-    case 'DELETE_TODO':
-      return {...state, todos: state.todos.filter((todo, index) => index !== action.payload)};
+    case 'TOGGLE_TASK':
+      return {...state, tasks: state.tasks.map((task, index) => index === action.payload ? { ...task, completed: !task.completed } : task)} 
+    case 'DELETE_TASK':
+      return {...state, tasks: state.tasks.filter((task, index) => index !== action.payload)};
     default:
       return state;
   }
 };
 
 // Redux store
-const store = createStore(todoReducer);
+const store = createStore(taskReducer);
 
 // Component
-function TodoList() {
-  const todos = useSelector((state) => state.todos);
+function TaskList() {
+  const tasks = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
 
-  const handleAddTodo = () => {
+  const handleAddTask = () => {
     if (inputValue.trim() !== '') {
-      dispatch(addTodo(inputValue));
+      dispatch(addTask(inputValue));
       setInputValue('');
     }
   };
 
-  const handleToggleTodo = (index) => {
-    dispatch(toggleTodo(index));
+  const handleToggleTask = (index) => {
+    dispatch(toggleTask(index));
   };
 
-  const handleDeleteTodo = (index) => {
-    dispatch(deleteTodo(index));
+  const handleDeleteTask = (index) => {
+    dispatch(deleteTask(index));
   };
 
   return (
     <div>
-      <h1>Todo List</h1>
+      <h1>Task List</h1>
       <input
         type="text"
         value={inputValue}
         onChange={handleInputChange}
-        placeholder="Add a new todo"
+        placeholder="Add a new task"
       />
-      <button onClick={handleAddTodo}>Add</button>
+      <button onClick={handleAddTask}>Add</button>
       <ul>
-        {todos.map((todo, index) => (
-          <li key={index} style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
-            <span onClick={() => handleToggleTodo(index)}>{todo.text}</span>
-            <button onClick={() => handleDeleteTodo(index)}>Delete</button>
-          </li>
-        ))}
+      {tasks.map((task, index) => (
+        <h3
+          key={index}
+          style={{ textDecoration: task.completed ? "line-through" : "none" }}
+        >
+          <input
+            type="checkbox"
+            checked={task.completed}
+            disabled={task.completed}
+            onChange={() => handleToggleTask(index)}
+          />
+          <span>{task.text}</span>
+
+          <button onClick={() => handleDeleteTask(index)}>Delete</button>
+        </h3>
+      ))}
       </ul>
     </div>
   );
@@ -84,7 +94,7 @@ function TodoList() {
 function App() {
   return (
     <Provider store={store}>
-      <TodoList />
+      <TaskList />
     </Provider>
   );
 }
